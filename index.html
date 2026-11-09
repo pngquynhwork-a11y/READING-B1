@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B1 Reading Practice Test - Interactive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Product+Sans&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/google-sans');
+    
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --primary-light: #e8f0fe;
+      --text: #202124;
+      --text-secondary: #5f6368;
+      --border: #dadce0;
+      --bg: #f8f9fa;
+      --correct: #1e8e3e;
+      --correct-bg: #e6f4ea;
+      --wrong: #d93025;
+      --wrong-bg: #fce8e6;
+      --target-word-bg: #ffeaa7;
+      --target-word-border: #fdcb6e;
+      --user-highlight-bg: #fff176;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Google Sans', 'Product Sans', sans-serif, -apple-system, BlinkMacSystemFont;
+      color: var(--text);
+      background-color: var(--bg);
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 16px; /* Tăng 2 size so với 14px */
+    }
+
+    /* Header */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .test-badge {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 5px 14px;
+      border-radius: 6px;
+    }
+
+    .student-tag {
+      font-size: 16px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-left: 10px;
+    }
+
+    .tab-btn {
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(26, 115, 232, 0.25);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* IELTS Tools Bar */
+    .ielts-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f3f4;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .tool-btn {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+
+    .tool-btn:hover {
+      background: #e8eaed;
+    }
+
+    .tool-btn.active {
+      background: #fef08a;
+      border-color: #ca8a04;
+      color: #854d0e;
+    }
+
+    .timer {
+      font-size: 16px;
+      font-weight: 700;
+      color: #d93025;
+      background: #fce8e6;
+      padding: 7px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-submit {
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 8px 22px;
+      background: #1e8e3e;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: #188038;
+    }
+
+    /* Modal nhập tên */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(32, 33, 36, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 480px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .modal-card h2 {
+      font-size: 20px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .modal-card p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 22px;
+    }
+
+    .modal-card input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .modal-card input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    .btn-start {
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 12px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-start:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Split Screen Layout */
+    .main-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .pane {
+      height: 100%;
+      overflow-y: auto;
+      padding: 26px 32px;
+    }
+
+    /* Cột trái: Bài đọc - Size 17px (tăng 2 size từ 15px) */
+    .pane-reading {
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      font-size: 17px;
+      line-height: 1.85;
+      text-align: justify;
+      position: relative;
+      user-select: text;
+    }
+
+    /* Tựa bài đọc - Size 18px (tăng 2 size từ 16px) */
+    .passage-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pane-reading p {
+      margin-bottom: 18px;
+      text-indent: 24px;
+    }
+
+    /* Cột phải: Câu hỏi - Size 16px (tăng 2 size từ 14px) */
+    .pane-questions {
+      background: #f8f9fa;
+      font-size: 16px;
+    }
+
+    .question-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .q-number-title {
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #202124;
+      font-size: 16px;
+    }
+
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1.5px solid #e8eaed;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.15s;
+    }
+
+    .option-label:hover {
+      background: #f1f3f4;
+    }
+
+    .option-label.selected {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .option-label input {
+      margin-top: 4px;
+      accent-color: var(--primary);
+      transform: scale(1.15);
+    }
+
+    /* Target words in quotes highlight (tô từ trong ngoặc kép) */
+    .target-quote-word {
+      background-color: var(--target-word-bg);
+      border-bottom: 2.5px solid var(--target-word-border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      color: #2d3436;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    /* User manual highlight (chuẩn IELTS không nhảy chữ) */
+    .user-highlight {
+      background-color: #fff59d;
+      color: inherit;
+      padding: 0;
+      margin: 0;
+      border-radius: 2px;
+      display: inline;
+    }
+
+    /* IELTS Floating Context Toolbar */
+    .ielts-popup-menu {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      background: #202124;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      padding: 4px;
+      gap: 4px;
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .popup-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      padding: 6px 12px;
+      font-size: 13.5px;
+      font-family: inherit;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+
+    .popup-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Explanation & Score styling */
+    .option-label.correct-choice {
+      background: var(--correct-bg) !important;
+      border-color: var(--correct) !important;
+      color: var(--correct) !important;
+      font-weight: 700;
+    }
+
+    .option-label.wrong-choice {
+      background: var(--wrong-bg) !important;
+      border-color: var(--wrong) !important;
+      color: var(--wrong) !important;
+    }
+
+    /* Giải thích - Size 15.5px */
+    .explanation-box {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: #f1f3f4;
+      border-left: 4px solid var(--primary);
+      font-size: 15.5px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .explanation-box.visible {
+      display: block;
+    }
+
+    .score-summary-card {
+      background: #ffffff;
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 22px;
+      text-align: center;
+      display: none;
+    }
+
+    .score-summary-card.visible {
+      display: block;
+    }
+
+    .score-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .score-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--correct);
+    }
+
+    
+  </style>
+</head>
+<body>
+
+  <!-- Modal nhập tên -->
+  <div class="modal-overlay" id="nameModal">
+    <div class="modal-card">
+      <h2>BÀI THI ĐỌC HIỂU TIẾNG ANH B1</h2>
+      <p>Thời gian làm bài: <b>40 phút</b> (2 bài đọc, 20 câu hỏi).<br>Vui lòng nhập họ và tên học viên để bắt đầu.</p>
+      <input type="text" id="studentNameInput" placeholder="Họ và tên học viên..." autofocus>
+      <button class="btn-start" onclick="startTest()">BẮT ĐẦU LÀM BÀI</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <div class="test-badge">VSTEP B1 READING</div>
+      <div class="student-tag" id="displayStudentName">Học viên: Chưa nhập</div>
+      <div class="tabs">
+        <button class="tab-btn active" id="btnTab1" onclick="switchTab(1)">Bài 1: Hospital Parking</button>
+        <button class="tab-btn" id="btnTab2" onclick="switchTab(2)">Bài 2: Career Choice</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <!-- IELTS Highlighter Toolbar -->
+      <div class="ielts-tools">
+        <button class="tool-btn" id="btnHighlightSelection" onclick="applyHighlightToSelection()" title="Bôi đen văn bản và nhấn để Highlight">
+          🖊️ Highlight
+        </button>
+        <button class="tool-btn" id="btnClearHighlight" onclick="clearSelectedHighlight()" title="Xóa đoạn đã đánh dấu">
+          🧹 Clear
+        </button>
+      </div>
+
+      <div class="timer" id="timerBox">⏱ 40:00</div>
+      <button class="btn-submit" id="btnSubmit" onclick="submitTest()">NỘP BÀI</button>
+    </div>
+  </header>
+
+  <!-- Split Screen Content -->
+  <div class="main-wrapper">
+    <!-- Cột trái: Bài đọc (size 17px, tựa 18px) -->
+    <div class="pane pane-reading" id="readingPane">
+      <!-- Nội dung bài đọc và floating menu sẽ được chèn ở đây -->
+    </div>
+
+    <!-- Cột phải: Câu hỏi (size 16px) & Bảng điểm -->
+    <div class="pane pane-questions" id="questionsPane">
+      <div class="score-summary-card" id="scoreCard">
+        <div class="score-title">KẾT QUẢ BÀI THI</div>
+        <div class="score-text" id="scoreDisplay">0 / 20</div>
+        <div style="font-size: 15px; color: var(--text-secondary); margin-top: 4px;" id="studentScoreDetail"></div>
+      </div>
+      <div id="questionsContainer"></div>
+    </div>
+  </div>
+
+  <!-- IELTS Floating Highlight Popup -->
+  <div class="ielts-popup-menu" id="ieltsPopup">
+    <button class="popup-btn" onclick="applyHighlightToSelection()">
+      <span style="display:inline-block; width:12px; height:12px; background:#fef08a; border-radius:2px;"></span> Highlight
+    </button>
+    <button class="popup-btn" onclick="clearSelectedHighlight()">
+      ❌ Clear
+    </button>
+  </div>
+
+  <script>
+    // Dữ liệu bài đọc & câu hỏi:
+    // - Bài 1: Highlight từ trong ngoặc kép ở Câu 7 ("This rule") và Câu 8 ("monitor")
+    // - Bài 2: Highlight từ trong ngoặc kép ở Câu 12 ("them"), Câu 16 ("glamorous") và Câu 18 ("evoke")
+    // - Không label dạng câu hỏi
+    const testData = {
+      passage1: {
+        title: "PASSAGE 1: HOSPITAL PARKING CHANGES",
+        textHtml: `
+          <p><b>To all staff</b></p>
+          <p>The hospital is trying to make the following changes, which will come into effect from 1st April.</p>
+          <p>Car Park A will stay as a staff car park, but, to encourage car sharing, it will only be available to cars containing 3 passengers or more. <span class="target-quote-word" id="target-p1-q7" title="Từ trong câu hỏi 7">This rule</span> will be in place between 7 a.m. and 6 p.m. A car park attendant will <span class="target-quote-word" id="target-p1-q8" title="Từ trong câu hỏi 8">monitor</span> users. Note that cars do not have to leave the car park with three passengers. The parking fee will remain at the current price of £1 an hour up to a maximum of £5 per day. If you are interested in car sharing and wish to find members of staff who live in your area or along your route, please click on the link on the human resources page of the hospital website. Car Park C, previously a staff-only car park, will now be open to visitors at the increased cost of £2/hour up to 5 hours, and £1 an hour after that. These new rates will also apply to staff/visitor Car Park E. Car Park B will only be open to blue card holders. Only senior and emergency staff are eligible for this card.</p>
+          <p>Car Park D will no longer be in use, as it will make away for an improved bus park. The current bus service (Service 56D) from the city center will be replaced by two services. The service will be available to staff, patients and visitors alike. Service 57A will run from Hebdon Town center Hebden Station, Critchley Park and Ride, Grafton Street, Portchester City Centre (Bus Stop D on Mill Yard) to the hospital. The service will run 24 hours a day every 20 minutes between 7 a.m. and 7 p.m. and once an hour during the night. There will also be an improved lock-up shed for bicycles and motorcycles in the former car park D. Hospital staff may wish to take advantage of the voucher giving 50% off all cycles and cycle accessories bought from Perkin’s Wheels, which is downloadable from the Human Resources website. Note that you will have to show your staff ID card at the store when making purchases. There will be a fix-it session once a fortnight in car park D on Fridays at 2 p.m. – 5 p.m. At this time, bicycle mechanics from Perkin’s Wheels will give advice on bicycle upkeep and make minor bicycle repair free of charge.</p>
+          <p>We hope you will take advantages of these schemes.</p>
+        `,
+        questions: [
+          {
+            id: 1,
+            q: "Question 1: What is the main topic of the passage?",
+            options: [
+              "A. Changes to hospital parking",
+              "B. Bicycle repair techniques",
+              "C. Hospital visitor regulations",
+              "D. Employee salary benefits"
+            ],
+            correct: 0,
+            explanation: "Thông báo nêu rõ những thay đổi về bãi đỗ xe và phương tiện của bệnh viện bắt đầu từ ngày 1/4 ('The hospital is trying to make the following changes...')."
+          },
+          {
+            id: 2,
+            q: "Question 2: Under the rules, staff can only park in car park A at noon if …",
+            options: [
+              "A. they hold a blue card",
+              "B. there are three people in the car",
+              "C. they stay for a maximum of 5 hours",
+              "D. they stay for a maximum of 6 hours"
+            ],
+            correct: 1,
+            explanation: "Khung giờ 7 a.m. - 6 p.m. (bao gồm buổi trưa noon), bãi A chỉ dành cho xe chở từ 3 người trở lên ('only be available to cars containing 3 passengers or more')."
+          },
+          {
+            id: 3,
+            q: "Question 3: The cost to park in Car park A for 4 hours will be …",
+            options: [
+              "A. £1",
+              "B. £4",
+              "C. £5",
+              "D. £6"
+            ],
+            correct: 1,
+            explanation: "Giá vé ở bãi A là £1/giờ ('The parking fee will remain at the current price of £1 an hour'). Đỗ 4 giờ = 4 x £1 = £4."
+          },
+          {
+            id: 4,
+            q: "Question 4: After April 1st, Car Park C will be for …",
+            options: [
+              "A. staff only",
+              "B. visitors only",
+              "C. staff and visitors",
+              "D. neither staff nor visitors"
+            ],
+            correct: 2,
+            explanation: "Bãi C trước đây chỉ cho nhân viên, nay mở cửa cho cả khách thăm bệnh ('previously a staff-only car park, will now be open to visitors') => Phục vụ cho cả nhân viên và khách."
+          },
+          {
+            id: 5,
+            q: "Question 5: The cost to park in Car Park C for 8 hours will be …",
+            options: [
+              "A. £8",
+              "B. £13",
+              "C. £18",
+              "D. £20"
+            ],
+            correct: 1,
+            explanation: "Biểu phí bãi C: £2/giờ cho 5 giờ đầu (= 5 x £2 = £10), sau đó £1/giờ. Đỗ 8 giờ: 5 giờ đầu (£10) + 3 giờ tiếp theo (3 x £1 = £3) = £13."
+          },
+          {
+            id: 6,
+            q: "Question 6: The cost to park in Car Park E for 4 hours will be …",
+            options: [
+              "A. £4",
+              "B. £7",
+              "C. £8",
+              "D. £10"
+            ],
+            correct: 2,
+            explanation: "Biểu phí bãi E áp dụng giống bãi C: £2/giờ trong 5 giờ đầu. Với 4 giờ đỗ = 4 x £2 = £8."
+          },
+          {
+            id: 7,
+            q: "Question 7: The word “This rule” in the passage refers to …",
+            options: [
+              "A. The requirement that only blue card holders may park in Car Park B",
+              "B. The rule that Car Park A is available only to cars containing three or more passengers between 7 a.m. and 6 p.m.",
+              "C. The parking fee of £1 per hour",
+              "D. The requirement to use the hospital website"
+            ],
+            correct: 1,
+            explanation: "Từ 'This rule' nằm ngay sau câu quy định bãi A chỉ dành cho xe chở từ 3 người trở lên giữa 7 a.m. và 6 p.m."
+          },
+          {
+            id: 8,
+            q: "Question 8: The word “monitor” in the passage is closest in meaning to …",
+            options: [
+              "A. ignore",
+              "B. supervise or watch carefully",
+              "C. transport",
+              "D. replace"
+            ],
+            correct: 1,
+            explanation: "'monitor' nghĩa là giám sát, trông coi cẩn thận = 'supervise or watch carefully'."
+          },
+          {
+            id: 9,
+            q: "Question 9: Which is NOT true about Perkin’s Wheels?",
+            options: [
+              "A. It sells bicycles and motorbikes.",
+              "B. It will sell goods to staff at half price.",
+              "C. It will fix staff member’s bikes for no charge.",
+              "D. It doesn’t sell motorbikes."
+            ],
+            correct: 2,
+            explanation: "Cửa hàng chỉ hỗ trợ sửa chữa các lỗi nhỏ miễn phí ('make minor bicycle repair free of charge') vào chiều thứ Sáu 2 tuần/lần, chứ không phải sửa chữa xe toàn bộ miễn phí mọi lúc."
+          },
+          {
+            id: 10,
+            q: "Question 10: What is the primary purpose of the notice in this passage?",
+            options: [
+              "A. To persuade staff to stop driving to work",
+              "B. To announce and explain upcoming changes to parking and transportation facilities at the hospital",
+              "C. To advertise Perkin’s Wheels bicycle store",
+              "D. To encourage visitors to use hospital services"
+            ],
+            correct: 1,
+            explanation: "Mục đích toàn bài: Thông báo và giải thích các điều chỉnh sắp tới đối với hệ thống bãi đỗ xe và phương tiện của bệnh viện."
+          }
+        ]
+      },
+      passage2: {
+        title: "PASSAGE 2: CHOOSING A CAREER",
+        textHtml: `
+          <p>Choosing a career may be one of the hardest jobs you ever have, and it must be done with care. View a career as an opportunity to do something you love, not simply as a way to earn a living. Investing the time and effort to thoroughly explore your options can mean the difference finding a stimulating and rewarding career, and moving from job to unsatisfying job in an attempt to find the right one. Work influences virtually every aspect of your life, from your choice of friends to where you live. Here are just a few of the factors to consider.</p>
+          <p>Deciding what matters most to you is essential to making the right decision. You may want to begin by assessing your likes, dislikes, strengths, and weaknesses. Think about classes, hobbies, and surroundings that you find most appealing. Ask your questions, such as, “would you like to travel? Do you want to work with children? Are you more suited to solitary or cooperative work?” There are no right or wrong answers; only you know what is important to you. Determine which job features you require, which ones you would prefer, and which ones you cannot accept. Then rank <span class="target-quote-word" id="target-p2-q12" title="Từ trong câu hỏi 12">them</span> in order of importance to you.</p>
+          <p>The setting of the job is one factor to take into account. You may not want to sit at a desk all day. If not, there are diverse occupations – building inspector, surveyor, real estate agent - that involve a great deal of time away from the office. Geographic location may be a concern, and employment in some fields is concentrated in certain regions. For example, aerospace jobs in the U.S. are most useful in California, Texas, and Washington. Advertising jobs can generally be found only in large cities. On the other hand, many industries such as hospitality, law, education, and retail sales are found in all regions of the country.</p>
+          <p>If a high salary is important to you, do not judge a career by its starting wages. Many jobs, such as insurance sales, offer relatively low in starting salaries; however, pay substantially increases along with your experience, additional training, promotions, and commission.</p>
+          <p>Don’t rule out any occupation without learning more about it. Some industries <span class="target-quote-word" id="target-p2-q18" title="Từ trong câu hỏi 18">evoke</span> positive or negative associations; The travelling life of a flight attendant appears <span class="target-quote-word" id="target-p2-q16" title="Từ trong câu hỏi 16">glamorous</span>, while that of a plumber does not. Remember that many jobs are not what they appear to be at first, and may have merits or demerits that are less obvious. Flight attendants must work long, grueling hours without sleeps, whereas plumbers can be as highly paid as some doctors. Another point to consider is that as you mature, you will likely develop new interests and skills that may point the way to new opportunities. The choice you make today need not be your final one.</p>
+        `,
+        questions: [
+          {
+            id: 21,
+            q: "Question 11 (21): What is the main topic of the passage?",
+            options: [
+              "A. Choosing a career",
+              "B. Salary growth",
+              "C. Job locations",
+              "D. Flight attendants"
+            ],
+            correct: 0,
+            explanation: "Chủ đề bao trùm: Hướng dẫn các yếu tố cần cân nhắc khi lựa chọn nghề nghiệp ('Choosing a career may be one of the hardest jobs...')."
+          },
+          {
+            id: 22,
+            q: "Question 12 (22): The word “them” in paragraph 2 refers to …",
+            options: [
+              "A. questions",
+              "B. answers",
+              "C. features",
+              "D. jobs"
+            ],
+            correct: 2,
+            explanation: "Từ quy chiếu 'them': 'Determine which job features you require, which ones you would prefer... Then rank them in order of importance' -> 'them' thay thế cho 'job features'."
+          },
+          {
+            id: 23,
+            q: "Question 13 (23): According to paragraph 3, which of the following fields is not suitable for a person who does not want to live in a big city?",
+            options: [
+              "A. Plumbing",
+              "B. Law",
+              "C. Retail sales",
+              "D. Advertising"
+            ],
+            correct: 3,
+            explanation: "Đoạn 3 có viết: 'Advertising jobs can generally be found only in large cities' -> công việc quảng cáo hầu như chỉ có ở thành phố lớn, do đó không thích hợp cho người không muốn sống ở thành phố lớn."
+          },
+          {
+            id: 24,
+            q: "Question 14 (24): According to the passage, which of the following is true?",
+            options: [
+              "A. If you want to make a lot of money, you should not take a job with a low starting salary.",
+              "B. If you want to make a lot of money, you should rule out all factory jobs.",
+              "C. If you want an easy and glamorous lifestyle, you should consider becoming a flight attendant.",
+              "D. Your initial view of certain careers may not be accurate."
+            ],
+            correct: 3,
+            explanation: "Đoạn cuối nhấn mạnh: 'Remember that many jobs are not what they appear to be at first, and may have merits or demerits that are less obvious' -> cái nhìn ban đầu về một công việc có thể không hoàn toàn chính xác."
+          },
+          {
+            id: 25,
+            q: "Question 15 (25): It can be inferred from the reading that …",
+            options: [
+              "A. jobs in an insurance sales are generally not well-paid",
+              "B. insurance salespeople can earn high salaries later in their careers",
+              "C. people should constantly work toward the next promotion",
+              "D. a starting salary should be an important consideration in choosing a career"
+            ],
+            correct: 1,
+            explanation: "Đoạn 4 nêu: Nhân viên bán bảo hiểm ban đầu lương thấp, nhưng sau đó thu nhập tăng đáng kể dựa trên kinh nghiệm và hoa hồng => họ có thể nhận mức thu nhập cao về sau."
+          },
+          {
+            id: 26,
+            q: "Question 16 (26): The word “glamorous” in paragraph 5 is closest in meaning to",
+            options: [
+              "A. attractive and exciting",
+              "B. ordinary and practical",
+              "C. difficult and stressful",
+              "D. serious and demanding"
+            ],
+            correct: 0,
+            explanation: "'glamorous' nghĩa là hào nhoáng, cuốn hút, hấp dẫn = 'attractive and exciting'."
+          },
+          {
+            id: 27,
+            q: "Question 17 (27): In paragraph 5, the author suggests that …",
+            options: [
+              "A. you may want to change careers at some time in the future",
+              "B. as you get older, your career will probably be less fulfilling",
+              "C. you will be at your job for a lifetime, so choose carefully",
+              "D. you will probably be jobless at some time in the future"
+            ],
+            correct: 0,
+            explanation: "Tác giả khuyên: 'The choice you make today need not be your final one' -> bạn hoàn toàn có thể muốn đổi sang một nghề nghiệp khác trong tương lai."
+          },
+          {
+            id: 28,
+            q: "Question 18 (28): The word “evoke” in paragraph 5 is closest in meaning to …",
+            options: [
+              "A. bring to mind",
+              "B. be related to",
+              "C. be different from",
+              "D. agree on"
+            ],
+            correct: 0,
+            explanation: "'evoke' mang nghĩa gợi lên, gợi mở trong tâm trí = 'bring to mind'."
+          },
+          {
+            id: 29,
+            q: "Question 19 (29): Why does the author mention “long, grueling hours without sleeps” in paragraph 5?",
+            options: [
+              "A. To emphasize the difficulty of working as a plumber",
+              "B. To contrast the reality of a flight attendant’s job with most people’s perceptions",
+              "C. To show that people must be willing to work hard for the career they’ve chosen",
+              "D. To discourage readers from choosing a career as a flight attendant"
+            ],
+            correct: 1,
+            explanation: "Tác giả nêu chi tiết này để làm nổi bật sự đối lập giữa thực tế làm việc vất vả của tiếp viên hàng không với quan niệm hào nhoáng mà người ngoài thường nghĩ."
+          },
+          {
+            id: 30,
+            q: "Question 20 (30): What can be inferred from the passage about career choice?",
+            options: [
+              "A. People should select a career based solely on their starting salary.",
+              "B. A career decision made today does not necessarily have to be permanent.",
+              "C. Most people remain satisfied with the first job they choose.",
+              "D. Personal interests are less important than geographic location."
+            ],
+            correct: 1,
+            explanation: "Câu cuối bài khẳng định: 'The choice you make today need not be your final one' => quyết định nghề nghiệp đưa ra hôm nay không nhất thiết phải là mãi mãi/vĩnh viễn."
+          }
+        ]
+      }
+    };
+
+    let currentTab = 1;
+    let studentName = "";
+    let userAnswers = {};
+    let isSubmitted = false;
+    let timeLeft = 40 * 60; // 40 phút
+    let timerInterval = null;
+
+    function startTest() {
+      const input = document.getElementById("studentNameInput");
+      const name = input.value.trim();
+      if (!name) {
+        alert("Vui lòng nhập họ và tên của học viên!");
+        input.focus();
+        return;
+      }
+      studentName = name;
+      document.getElementById("displayStudentName").textContent = "Học viên: " + studentName;
+      document.getElementById("nameModal").style.display = "none";
+
+      renderPassage();
+      renderQuestions();
+      startTimer();
+      setupIeltsHighlighter();
+    }
+
+    function switchTab(tabNum) {
+      currentTab = tabNum;
+      document.getElementById("btnTab1").classList.toggle("active", tabNum === 1);
+      document.getElementById("btnTab2").classList.toggle("active", tabNum === 2);
+      renderPassage();
+      renderQuestions();
+    }
+
+    function renderPassage() {
+      const data = currentTab === 1 ? testData.passage1 : testData.passage2;
+      const readingPane = document.getElementById("readingPane");
+      readingPane.innerHTML = `<div class="passage-title">${data.title}</div>` + data.textHtml;
+      readingPane.scrollTop = 0;
+    }
+
+    function renderQuestions() {
+      const data = currentTab === 1 ? testData.passage1 : testData.passage2;
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      data.questions.forEach((qObj) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+
+        const title = document.createElement("div");
+        title.className = "q-number-title";
+        title.textContent = qObj.q; // KHÔNG gắn label dạng câu hỏi
+        card.appendChild(title);
+
+        const optionsGroup = document.createElement("div");
+        optionsGroup.className = "options-group";
+
+        qObj.options.forEach((opt, optIdx) => {
+          const label = document.createElement("label");
+          label.className = "option-label";
+
+          const isChecked = userAnswers[qObj.id] === optIdx;
+          if (isChecked) {
+            label.classList.add("selected");
+          }
+
+          if (isSubmitted) {
+            if (optIdx === qObj.correct) {
+              label.classList.add("correct-choice");
+            } else if (isChecked && optIdx !== qObj.correct) {
+              label.classList.add("wrong-choice");
+            }
+          }
+
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = "q_" + qObj.id;
+          radio.value = optIdx;
+          radio.checked = isChecked;
+          radio.disabled = isSubmitted;
+
+          radio.onchange = () => {
+            if (!isSubmitted) {
+              userAnswers[qObj.id] = optIdx;
+              renderQuestions();
+            }
+          };
+
+          const textSpan = document.createElement("span");
+          textSpan.textContent = opt;
+
+          label.appendChild(radio);
+          label.appendChild(textSpan);
+          optionsGroup.appendChild(label);
+        });
+
+        card.appendChild(optionsGroup);
+
+        if (isSubmitted) {
+          const expBox = document.createElement("div");
+          expBox.className = "explanation-box visible";
+          const isRight = userAnswers[qObj.id] === qObj.correct;
+          const statusIcon = isRight ? "✅" : "❌";
+
+          expBox.innerHTML = `<b>${statusIcon} Đáp án đúng:</b> ${qObj.options[qObj.correct]}<br><b>Giải thích:</b> ${qObj.explanation}`;
+          card.appendChild(expBox);
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    /* ROBUST, JUMP-FREE HIGHLIGHTER (KHÔNG BỊ NHẢY CHỮ) */
+    let currentSelectionRange = null;
+
+    function setupIeltsHighlighter() {
+      const readingPane = document.getElementById("readingPane");
+      const popup = document.getElementById("ieltsPopup");
+
+      readingPane.addEventListener("mouseup", (e) => {
+        // Trì hoãn 10ms để browser hoàn tất selection
+        setTimeout(() => {
+          const selection = window.getSelection();
+          if (selection && !selection.isCollapsed && selection.toString().trim().length > 0) {
+            const range = selection.getRangeAt(0);
+            // Kiểm tra xem selection có nằm trong readingPane không
+            if (readingPane.contains(range.commonAncestorContainer)) {
+              currentSelectionRange = range.cloneRange();
+              const rect = range.getBoundingClientRect();
+              popup.style.display = "flex";
+              // Đặt vị trí popup ngay phía trên vị trí bôi đen
+              const left = Math.max(10, rect.left + (rect.width / 2) - 60);
+              const top = Math.max(10, rect.top - 42);
+              popup.style.left = `${left}px`;
+              popup.style.top = `${top}px`;
+              return;
+            }
+          }
+          popup.style.display = "none";
+        }, 10);
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!popup.contains(e.target) && e.target.id !== "btnHighlightSelection" && e.target.id !== "btnClearHighlight") {
+          popup.style.display = "none";
+        }
+      });
+    }
+
+    function getTextNodesInRange(range) {
+      const textNodes = [];
+      const root = range.commonAncestorContainer;
+      const walker = document.createTreeWalker(
+        root.nodeType === Node.TEXT_NODE ? root.parentNode : root,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+            if (range.intersectsNode(node)) return NodeFilter.FILTER_ACCEPT;
+            return NodeFilter.FILTER_REJECT;
+          }
+        }
+      );
+
+      if (root.nodeType === Node.TEXT_NODE && range.intersectsNode(root)) {
+        textNodes.push(root);
+      } else {
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode);
+        }
+      }
+      return textNodes;
+    }
+
+    function applyHighlightToSelection() {
+      const readingPane = document.getElementById("readingPane");
+      const savedScroll = readingPane.scrollTop;
+      const popup = document.getElementById("ieltsPopup");
+      popup.style.display = "none";
+
+      const selection = window.getSelection();
+      let range = null;
+      if (selection && !selection.isCollapsed && selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+      } else if (currentSelectionRange) {
+        range = currentSelectionRange;
+      }
+
+      if (!range || !readingPane.contains(range.commonAncestorContainer)) return;
+
+      const textNodes = getTextNodesInRange(range);
+      textNodes.forEach((node) => {
+        // Kiểm tra nếu node đã nằm trong .user-highlight thì bỏ qua để không lồng nhau
+        if (node.parentElement && node.parentElement.classList.contains("user-highlight")) {
+          return;
+        }
+
+        const start = (node === range.startContainer) ? range.startOffset : 0;
+        const end = (node === range.endContainer) ? range.endOffset : node.nodeValue.length;
+
+        if (start < end) {
+          const text = node.nodeValue;
+          const before = text.substring(0, start);
+          const selectedText = text.substring(start, end);
+          const after = text.substring(end);
+
+          const mark = document.createElement("mark");
+          mark.className = "user-highlight";
+          mark.textContent = selectedText;
+
+          const parent = node.parentNode;
+          if (before) parent.insertBefore(document.createTextNode(before), node);
+          parent.insertBefore(mark, node);
+          if (after) parent.insertBefore(document.createTextNode(after), node);
+          parent.removeChild(node);
+        }
+      });
+
+      if (selection) selection.removeAllRanges();
+      currentSelectionRange = null;
+      readingPane.scrollTop = savedScroll;
+    }
+
+    function clearSelectedHighlight() {
+      const readingPane = document.getElementById("readingPane");
+      const savedScroll = readingPane.scrollTop;
+      const popup = document.getElementById("ieltsPopup");
+      popup.style.display = "none";
+
+      const selection = window.getSelection();
+      let range = null;
+      if (selection && !selection.isCollapsed && selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+      } else if (currentSelectionRange) {
+        range = currentSelectionRange;
+      }
+
+      if (range) {
+        const highlights = readingPane.querySelectorAll(".user-highlight");
+        highlights.forEach((mark) => {
+          if (range.intersectsNode(mark)) {
+            const parent = mark.parentNode;
+            while (mark.firstChild) {
+              parent.insertBefore(mark.firstChild, mark);
+            }
+            parent.removeChild(mark);
+            parent.normalize(); // Nối lại các text node liền kề để không vỡ cấu trúc
+          }
+        });
+      }
+
+      if (selection) selection.removeAllRanges();
+      currentSelectionRange = null;
+      readingPane.scrollTop = savedScroll;
+    }
+
+    function startTimer() {
+      const timerBox = document.getElementById("timerBox");
+      timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("Hết giờ làm bài! Hệ thống tự động thu bài.");
+          submitTest(true);
+          return;
+        }
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerBox.textContent = `⏱ ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }, 1000);
+    }
+
+    function submitTest(force = false) {
+      if (isSubmitted) return;
+
+      const answeredCount = Object.keys(userAnswers).length;
+      if (!force && answeredCount < 20) {
+        const confirmSubmit = confirm(`Bạn mới làm ${answeredCount}/20 câu. Bạn có chắc muốn nộp bài sớm không?`);
+        if (!confirmSubmit) return;
+      }
+
+      clearInterval(timerInterval);
+      isSubmitted = true;
+      document.getElementById("btnSubmit").style.display = "none";
+      document.getElementById("timerBox").style.display = "none";
+
+      // Chấm điểm
+      let score = 0;
+      [...testData.passage1.questions, ...testData.passage2.questions].forEach(q => {
+        if (userAnswers[q.id] === q.correct) {
+          score++;
+        }
+      });
+
+      const scoreCard = document.getElementById("scoreCard");
+      scoreCard.classList.add("visible");
+      document.getElementById("scoreDisplay").textContent = `${score} / 20 Điểm (${(score * 0.5).toFixed(1)}/10)`;
+      document.getElementById("studentScoreDetail").textContent = `Học viên: ${studentName} | Số câu đúng: ${score} câu | Số câu sai/chưa chọn: ${20 - score} câu`;
+
+      renderPassage();
+      renderQuestions();
+      document.getElementById("questionsPane").scrollTop = 0;
+    }
+  </script>
+</body>
+</html>
